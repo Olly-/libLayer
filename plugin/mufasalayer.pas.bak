@@ -1,0 +1,129 @@
+unit MufasaLayer;
+
+{$APPTYPE CONSOLE}
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, Process, Windows;
+
+type
+
+  { TMufasaLayer }
+
+  TMufasaLayer = class(TObject)
+  private
+    FProcess: TProcess;
+    FWindow: HWND;
+
+    imageWidth, imageHeight: Integer;
+    imageHDC: HDC;
+    imageHBitmap: HBitmap;
+  public
+    function SetBitmap(AWidth, AHeight: Integer): Pointer;
+    procedure Paint;
+
+    constructor Create(ATarget: PtrUInt; APath: String);
+    destructor Destroy; override;
+  end;
+
+implementation
+
+{ TMufasaLayer }
+
+constructor TMufasaLayer.Create(ATarget: PtrUInt; APath: String);
+var
+  l: TStringList;
+  Str: String;
+  i: Integer;
+begin
+  inherited Create;
+
+  FWindow := 0;
+  imageHBitmap := 0;
+  imageHDC := 0;
+
+  FProcess := TProcess.Create(nil);
+  try
+    FProcess.Executable := APath + 'mLayer.exe';
+    FProcess.Parameters.Add('-target');
+    FProcess.Parameters.Add(IntToStr(ATarget));
+    FProcess.Options := [poUsePipes, poStderrToOutPut];
+    FProcess.Execute;
+
+    Writeln('Started mLayer.exe');
+  except
+    on e: Exception do
+    begin
+      Writeln('TProcess exception: ' + e.Message);
+      Exit;
+    end;
+  end;
+
+  l := TStringList.Create;
+  try
+    while FProcess.Running do
+    begin
+      l.LoadFromStream(FProcess.Output);
+      if (l.Count <> 0) then Break;
+      Sleep(500);
+    end;
+    if (Pos('Handle=', l.Text) > 0) then
+    begin
+      Str := '';
+      for i := 1 to Length(l.Text) do
+        if (l.Text[i] in ['0'..'9']) then Str += l.Text[i];
+      FWindow := StrToInt(Str);
+    end;
+
+    if (FWindow = 0) then
+      raise Exception.Create('Failed to get a response from mLayer.exe');
+    Writeln('Layer window: ', FWindow);
+  except
+    on e: Exception do
+      Writeln('TProcess(2) exception: ' + e.Message);
+  end;
+end;
+
+function TMufasaLayer.SetBitmap(AWidth, AHeight: Integer): Pointer;
+var
+  bi: BITMAPINFO;
+begin
+  ZeroMemory(@bi, SizeOf(BITMAPINFO));
+  bi.bmiHeader.biSize := SizeOf(BITMAPINFOHEADER);
+  bi.bmiHeader.biWidth := AWidth;
+  bi.bmiHeader.biHeight := -AHeight;
+  bi.bmiHeader.biPlanes := 1;
+  bi.bmiHeader.biBitCount := 32;
+  bi.bmiHeader.biCompression := BI_RGB;
+  bi.bmiHeader.biSizeImage := 0;
+  bi.bmiHeader.biClrUsed := 0;
+
+  imageWidth := AWidth;
+  imageHeight := AHeight;
+  imageHDC := CreateCompatibleDC(0);
+  imageHBITMAP := Windows.CreateDIBSection(imageHDC, bi, DIB_RGB_COLORS, Result, 0, 0);
+  SelectObject(imageHDC, imageHBITMAP);
+end;
+
+procedure TMufasaLayer.Paint;
+begin
+  BitBlt(GetWindowDC(FWindow), 0, 0, imageWidth, imageHeight, imageHDC, 0, 0, SRCCOPY);
+end;
+
+destructor TMufasaLayer.Destroy;
+begin
+  if (imageHDC > 0) then
+    DeleteObject(imageHDC);
+  if (imageHDC > 0) then
+    DeleteObject(imageHBitmap);
+
+  FProcess.Terminate(0);
+  FProcess.Free;
+
+  inherited Destroy;
+end;
+
+end.
+

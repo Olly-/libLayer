@@ -1,0 +1,14 @@
+object TransparentForm: TTransparentForm
+  Left = 971
+  Height = 240
+  Top = 638
+  Width = 320
+  BorderStyle = bsNone
+  Caption = 'TransparentForm'
+  Color = clBlack
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnPaint = FormPaint
+  ShowInTaskBar = stAlways
+  LCLVersion = '1.6.0.4'
+end
