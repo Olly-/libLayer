@@ -8,9 +8,8 @@
       <Unit0>
         <Filename Value="libMufasaLayer.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="44"/>
-        <CursorPos X="64" Y="69"/>
+        <CursorPos X="32" Y="53"/>
         <UsageCount Value="33"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -32,8 +31,8 @@
       <Unit3>
         <Filename Value="mufasalayer.pas"/>
         <UnitName Value="MufasaLayer"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="161"/>
         <CursorPos X="42" Y="183"/>
         <UsageCount Value="26"/>
         <Loaded Value="True"/>
