@@ -1,0 +1,13 @@
+*.ppu
+*.o
+*.or
+*.compiled
+*.ppas.sh
+*.res
+*.lps
+*.bak
+*.local
+*.exe
+
+build
+backup

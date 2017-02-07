@@ -4,12 +4,15 @@
     <Version Value="9"/>
     <PathDelim Value="\"/>
     <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="mLayer"/>
+      <Title Value="libLayer"/>
+      <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
-      <UseXPManifest Value="True"/>
-      <Icon Value="0"/>
     </General>
     <i18n>
       <EnableI18N LFM="False"/>
@@ -18,7 +21,7 @@
       <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="1">
-      <Item1 Name="Default" Default="True"/>
+      <Item1 Name="Release" Default="True"/>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -28,44 +31,48 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="1">
-      <Item1>
-        <PackageName Value="LCL"/>
-      </Item1>
-    </RequiredPackages>
-    <Units Count="2">
+    <Units Count="4">
       <Unit0>
-        <Filename Value="mLayer.lpr"/>
+        <Filename Value="libLayer.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="main.pas"/>
+        <Filename Value="liblayer.hooks.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="TransparentForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Main"/>
+        <UnitName Value="libLayer.Hooks"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="liblayer.bitmap.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="libLayer.Bitmap"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="liblayer.paintthread.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="libLayer.PaintThread"/>
+      </Unit3>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="mLayer"/>
+      <Filename Value="release/libLayer"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <CodeGeneration>
+      <RelocatableUnit Value="True"/>
+      <TargetCPU Value="i386"/>
+    </CodeGeneration>
     <Linking>
       <Debugging>
         <GenerateDebugInfo Value="False"/>
       </Debugging>
       <Options>
-        <Win32>
-          <GraphicApplication Value="True"/>
-        </Win32>
+        <ExecutableType Value="Library"/>
       </Options>
     </Linking>
   </CompilerOptions>
