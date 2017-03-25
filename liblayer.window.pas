@@ -317,7 +317,6 @@ constructor TLayer.Create(ATarget: HWND);
   end;
 
 var
-  R, RR: TRect;
   Root: HWND;
 begin
   FTarget := ATarget;
@@ -333,11 +332,8 @@ begin
   Root := GetAncestor(FTarget, GA_ROOT);
   if (Root <> FTarget) then // Target is a child window, so we will offset painting
   begin
-    R := WindowRect(FTarget);
-    RR := WindowRect(Root);
-
-    FOffset.X := R.Left - RR.Left;
-    FOffset.Y := R.Top - RR.Top;
+    FOffset.X := WindowRect(FTarget).Left - WindowRect(Root).Left;
+    FOffset.Y := WindowRect(FTarget).Top - WindowRect(Root).Top;
 
     FTarget := Root;
   end;
@@ -358,6 +354,9 @@ begin
   SetLayered();
   SetTransparentColor(0);
   SetParent(FTarget);
+
+  // Focus the target window, else sometimes the layer wont show.
+  BringWindowToTop(FTarget);
 
   // Add hooks
   LayerHooks.IncRef();
