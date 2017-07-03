@@ -61,13 +61,21 @@ begin
 
     if ((Layer <> nil) and (Layer.OnClick <> nil)) and ((Handle = Layer.Target) or (Layer.HasChild(Handle))) then
     begin
-      ScreenToClient(Layer.Target, P);
-      P.X -= Layer.Offset.X;
-      P.Y -= Layer.Offset.Y;
+      if (Layer.ScriptActive) then
+      begin
+        ScreenToClient(Layer.Target, P);
+        P.X -= Layer.Offset.X;
+        P.Y -= Layer.Offset.Y;
 
-      Layer.OnClick(P.X, P.Y, Block);
-      if (Block) then
-        Exit(-1);
+        Layer.OnClick(P.X, P.Y, Block);
+        if (Block) then
+          Exit(-1);
+      end else
+      begin
+        WriteLn('Script thread inactive, not processing mouse click');
+
+        Layer.ScriptActive := False;
+      end;
     end;
   end;
 

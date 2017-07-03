@@ -14,7 +14,7 @@ type
 
 procedure Lape_Layer_Init(const Params: PParamArray); cdecl;
 begin
-  PLayer(Params^[0])^ := TLayer.Create(PPtrUInt(Params^[1])^);
+  PLayer(Params^[0])^ := TLayer.Create(PPtrUInt(Params^[1])^, PUInt32(Params^[2])^);
 end;
 
 procedure Lape_Layer_Free(const Params: PParamArray); cdecl;
@@ -82,7 +82,7 @@ begin
     0:
       begin
         Addr := @Lape_Layer_Init;
-        StrPCopy(Decl, 'procedure TLayer.Init(Window: PtrUInt); native;');
+        StrPCopy(Decl, 'procedure TLayer.Init(Window: PtrUInt; ScriptThread: UInt32); native;');
       end;
     1:
       begin

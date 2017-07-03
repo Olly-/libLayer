@@ -22,9 +22,12 @@ type
     FOnClick: TLayerClickEvent;
     FBitmap: TLayerBitmap;
     FWidth, FHeight: Int32;
+    FScriptThread: HANDLE;
 
     function GetData: Pointer;
+    function GetScriptActive: Boolean;
     procedure SetPaintInterval(Interval: Int32);
+    procedure SetScriptActive(Active: Boolean);
   public
     property Window: HWND read FWindow;
     property Target: HWND read FTarget;
@@ -35,6 +38,7 @@ type
     property Bitmap: TLayerBitmap read FBitmap;
     property PaintInterval: Int32 read FPaintInterval write SetPaintInterval;
     property Offset: POINT read FOffset;
+    property ScriptActive: Boolean read GetScriptActive write SetScriptActive;
 
     procedure AddChild(Handle: HWND);
     function HasChild(Handle: HWND): Boolean;
@@ -52,7 +56,7 @@ type
 
     procedure Paint;
 
-    constructor Create(ATarget: HWND);
+    constructor Create(ATarget: HWND; AScriptThread: UInt32);
     destructor Destroy; override;
   end;
 
@@ -187,6 +191,23 @@ begin
     Exit(FBitmap.Ptr);
 end;
 
+function TLayer.GetScriptActive: Boolean;
+var
+  Code: DWord = 0;
+begin
+  Result := (GetExitCodeThread(FScriptThread, Code)) and (Code = STILL_ACTIVE);
+end;
+
+procedure TLayer.SetScriptActive(Active: Boolean);
+begin
+  if (not Active) and (FScriptThread > 0) then
+  begin
+    CloseHandle(FScriptThread);
+
+    FScriptThread := 0;
+  end;
+end;
+
 procedure TLayer.SetPaintInterval(Interval: Int32);
 begin
   if (FPaintInterval = Interval) then
@@ -281,7 +302,7 @@ begin
   end;
 end;
 
-constructor TLayer.Create(ATarget: HWND);
+constructor TLayer.Create(ATarget: HWND; AScriptThread: UInt32);
 
   procedure CreateWindow;
   var
@@ -338,6 +359,9 @@ begin
     FTarget := Root;
   end;
 
+  // Store script thread
+  FScriptThread := OpenThread(THREAD_QUERY_INFORMATION, False, AScriptThread);
+
   // Get children
   SetLength(FChildren, 0);
   EnumChildWindows(FTarget, @GetChildren, PtrUInt(@Self));
@@ -364,13 +388,14 @@ begin
   // Create Image
   FBitmap := TLayerBitmap.Create(FWidth, FHeight);
 
-  // Add to a list so we can free unfree'd ones
+  // Add to a list so we can free unfreed ones
   LayerList.Add(Self);
 end;
 
 destructor TLayer.Destroy;
 begin
   Close();
+  ScriptActive := False;
   LayerHooks.DecRef();
   LayerList.Remove(Self);
 

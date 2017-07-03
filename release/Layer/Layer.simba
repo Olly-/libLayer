@@ -8,6 +8,7 @@ type
 
 var
   Layer: TSimbaLayer;
+  ScriptThread: UInt32;
 
 procedure TSimbaLayer.Paint;
 begin
@@ -31,7 +32,7 @@ end;
 
 procedure _InitSimbaLayer;
 begin
-  Layer.InternalLayer.Init(Client.GetIOManager().GetImageTarget().GetHandle());
+  Layer.InternalLayer.Init(Client.GetIOManager().GetImageTarget().GetHandle(), ScriptThread);
 end;
 {$ELSE}
 type
@@ -44,7 +45,7 @@ end;
 
 procedure _InitSimbaLayer; Native;
 begin
-  Layer.InternalLayer.Init(Client.GetIOManager().GetImageTarget().GetHandle());
+  Layer.InternalLayer.Init(Client.GetIOManager().GetImageTarget().GetHandle(), ScriptThread);
 end;
 {$ENDIF}
 
@@ -55,6 +56,8 @@ begin
 end;
 
 begin
+  ScriptThread := GetCurrThreadID();
+
   {$IFDECL TSyncMethod}
     Sync(@_InitSimbaLayer);
   {$ELSE}
