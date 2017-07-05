@@ -67,12 +67,12 @@ begin
         P.X -= Layer.Offset.X;
         P.Y -= Layer.Offset.Y;
 
-        Layer.OnClick(P.X, P.Y, Block);
+        Layer.OnClick(Layer, P.X, P.Y, Block);
         if (Block) then
           Exit(-1);
       end else
       begin
-        WriteLn('Script thread inactive, not processing mouse click');
+        WriteLn('Script thread inactive - not processing mouse click');
 
         Layer.ScriptActive := False;
       end;

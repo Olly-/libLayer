@@ -1,14 +1,21 @@
 {$i Layer/Layer.simba}
 
-procedure OnClick(X, Y: Int32; var Block: Boolean);
+var
+  Layer: TLayer;
+
+procedure OnClick(Sender: TObject; X, Y: Int32; var Block: Boolean);
 begin
+  Client.WriteLn(ToString(Sender));
   Client.WriteLn('Click @ ' + IntToStr(X) + ', ' + IntToStr(Y));
 end;
 
 begin
+  Layer := TLayer.Create(GetNativeWindow());
   Layer.OnClick(@OnClick);
   Layer.Bitmap.Rectangle(IntToBox(50, 50, 250, 250), 255);
   Layer.Paint();
+
+  WriteLn(ToString(Layer));
 
   while True do Continue;
 end.

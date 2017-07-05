@@ -82,52 +82,52 @@ begin
     0:
       begin
         Addr := @Lape_Layer_Init;
-        StrPCopy(Decl, 'procedure TLayer.Init(Window: PtrUInt; ScriptThread: UInt32); native;');
+        StrPCopy(Decl, 'procedure TWindowLayer.Init(Window: PtrUInt; ScriptThread: UInt32); native;');
       end;
     1:
       begin
         Addr := @Lape_Layer_Free;
-        StrPCopy(Decl, 'procedure TLayer.Free; native;');
+        StrPCopy(Decl, 'procedure TWindowLayer.Free; native;');
       end;
     2:
       begin
         Addr := @Lape_Layer_OnClick;
-        StrPCopy(Decl, 'procedure TLayer.OnClick(Method: Pointer); native;');
+        StrPCopy(Decl, 'procedure TWindowLayer.OnClick(Method: Pointer); native;');
       end;
     3:
       begin
         Addr := @Lape_Layer_Data;
-        StrPCopy(Decl, 'function TLayer.Data: PRGB32; native;');
+        StrPCopy(Decl, 'function TWindowLayer.Data: PRGB32; native;');
       end;
     4:
       begin
         Addr := @Lape_Layer_Width;
-        StrPCopy(Decl, 'function TLayer.Width: Int32; native;');
+        StrPCopy(Decl, 'function TWindowLayer.Width: Int32; native;');
       end;
     5:
       begin
         Addr := @Lape_Layer_Height;
-        StrPCopy(Decl, 'function TLayer.Height: Int32; native;');
+        StrPCopy(Decl, 'function TWindowLayer.Height: Int32; native;');
       end;
     6:
       begin
         Addr := @Lape_Layer_Paint;
-        StrPCopy(Decl, 'procedure TLayer.Paint; native;');
+        StrPCopy(Decl, 'procedure TWindowLayer.Paint; native;');
       end;
     7:
       begin
         Addr := @Lape_Layer_PaintInterval;
-        StrPCopy(Decl, 'procedure TLayer.PaintInterval(Interval: Int32); native;');
+        StrPCopy(Decl, 'procedure TWindowLayer.PaintInterval(Interval: Int32); native;');
       end;
     8:
       begin
         Addr := @Lape_Layer_BeginUpdate;
-        StrPCopy(Decl, 'procedure TLayer.BeginUpdate; native;');
+        StrPCopy(Decl, 'procedure TWindowLayer.BeginUpdate; native;');
       end;
     9:
       begin
         Addr := @Lape_Layer_EndUpdate;
-        StrPCopy(Decl, 'procedure TLayer.EndUpdate; native;');
+        StrPCopy(Decl, 'procedure TWindowLayer.EndUpdate; native;');
       end;
   end;
 
@@ -136,7 +136,7 @@ end;
 
 function GetTypeCount(): Int32; cdecl; export;
 begin
-  Result := 1;
+  Result := 4;
 end;
 
 function GetTypeInfo(Index: Int32; var Name, Def: PChar): Int32; cdecl; export;
@@ -144,8 +144,23 @@ begin
   case Index of
     0:
       begin
+        StrPCopy(Name, 'TWindowLayer');
+        StrPCopy(Def, 'type Pointer');
+      end;
+    1:
+      begin
         StrPCopy(Name, 'TLayer');
-        StrPCopy(Def,  'type Pointer');
+        StrPCopy(Def, 'record Window: TWindowLayer; Bitmap: TMufasaBitmap; end');
+      end;
+    2:
+      begin
+        StrPCopy(Name, '_TLayerClickEvent');
+        StrPCopy(Def, 'procedure(Sender: TObject; X, Y: Int32; var Block: Boolean)');
+      end;
+    3:
+      begin
+        StrPCopy(Name, 'TLayerClickEvent');
+        StrPCopy(Def, 'native(_TLayerClickEvent, FFI_CDECL)');
       end;
   end;
 

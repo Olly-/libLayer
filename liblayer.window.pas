@@ -9,7 +9,7 @@ uses
   libLayer.Bitmap, libLayer.PaintThread;
 
 type
-  TLayerClickEvent = procedure(X, Y: Int32; var Block: Boolean); cdecl;
+  TLayerClickEvent = procedure(Sender: TObject; X, Y: Int32; var Block: Boolean); cdecl;
 
   TLayer = class
   private
